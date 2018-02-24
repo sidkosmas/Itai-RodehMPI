@@ -1,4 +1,4 @@
-#Itai-Rodeh Algorithm for Anonymous Rings
+# Itai-Rodeh Algorithm for Anonymous Rings
 
 The Itai-Rodeh is a leader selection algorithm used in a 
 distrubuted system with anonymous rings. It has a time complexity
