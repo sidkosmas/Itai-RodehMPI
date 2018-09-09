@@ -27,7 +27,8 @@ struct stats	//The level, id, and state of each process
 
 print_stats(int rank, int state, struct token tok)
 {
-	printf("Rank %d, state %d, level %d, id %d, hops %d, un %d, ready %d\n", rank, state, tok.level, tok.id, tok.hops, tok.un, tok.ready);
+	printf("Rank %d, state %d, level %d, id %d, hops %d, un %d, ready %d\n", 
+	       rank, state, tok.level, tok.id, tok.hops, tok.un, tok.ready);
 }
 
 int main(int argc, char **argv) {
@@ -45,7 +46,7 @@ int main(int argc, char **argv) {
 
 	/* Create a MPI_Datatype so we can send a struct to the next process*/
     const int nitems = 5;
-    int          blocklengths[5] = {1,1,1,1,1};
+    int blocklengths[5] = {1,1,1,1,1};
     MPI_Datatype types[5] = {MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT};
     MPI_Datatype MPI_TOKEN;
     MPI_Aint     offsets[5];
@@ -79,12 +80,14 @@ int main(int argc, char **argv) {
 	snd_tok.hops = 1;
 	snd_tok.un = 1;
 	snd_tok.ready = 0;
-    MPI_Send(&snd_tok, 1, MPI_TOKEN, p_next, token_tag, MPI_COMM_WORLD);	//Sends init values to the next process in the ring.
+    //Sends init values to the next process in the ring.
+    MPI_Send(&snd_tok, 1, MPI_TOKEN, p_next, token_tag, MPI_COMM_WORLD);
 
 	int stop = 0;
     while(stop == 0)
     {
-        MPI_Recv(&rcv_tok, 1, MPI_TOKEN, src, token_tag, MPI_COMM_WORLD, &status);	//Receive the token from previous process
+	    //Receive the token from previous process
+        MPI_Recv(&rcv_tok, 1, MPI_TOKEN, src, token_tag, MPI_COMM_WORLD, &status);	
 		//print_stats(rank, pstats.state, rcv_tok);
 
         if(rcv_tok.ready == 0)
@@ -126,7 +129,9 @@ int main(int argc, char **argv) {
 					MPI_Send(&snd_tok, 1, MPI_TOKEN, p_next, token_tag, MPI_COMM_WORLD);
 				}
 				/*send <tok, level, id, hops+1, bit> to Next_p */
-				else if( (rcv_tok.level > pstats.level && rcv_tok.id > pstats.id) || (rcv_tok.level == pstats.level && rcv_tok.id > pstats.id)|| (rcv_tok.level > pstats.level && rcv_tok.id == pstats.id))
+				else if((rcv_tok.level > pstats.level && rcv_tok.id > pstats.id) || 
+						(rcv_tok.level == pstats.level && rcv_tok.id > pstats.id) || 
+						(rcv_tok.level > pstats.level && rcv_tok.id == pstats.id))
 				{
 					pstats.state = 3;
 					snd_tok.level = rcv_tok.level;
