@@ -36,3 +36,8 @@ of O(Nlog(N)) and sends O(N) messages.
 			send <ready> to p_next; stop_p = true;
 		}
     }
+
+## How to compile and run
+	
+	mpicc distr_exc.c -o <output>
+	mpirun -np <number_of_p> ./<output>
